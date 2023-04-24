@@ -11,9 +11,9 @@
 // Use https://closure-compiler.appspot.com/home
 // Move the *Class variables inside the IIFE.  They're outside so the names are not
 // mangled by ClosureCompiler:
-iconWrapperClass = "tooltip2_element-wrapper";
-tooltipWrapperClass = "tooltip2_tooltip-wrapper";
-arrowClass = "tooltip2_arrow";
+iconWrapperClass = "tooltip1_element-wrapper";
+tooltipWrapperClass = "tooltip1_tooltip-wrapper";
+arrowClass = "tooltip1_arrow";
 
 (() => {
   //////////////////////
@@ -81,11 +81,11 @@ arrowClass = "tooltip2_arrow";
 
     const tooltip = icon.parentElement.querySelector("." + tooltipWrapperClass);
     const arrow = icon.parentElement.querySelector("." + arrowClass);
-    const naturalDirection = arrow.classList.contains("is-left")
+    const naturalDirection = arrow.className.includes("is-left")
       ? "left"
-      : arrow.classList.contains("is-right")
+      : arrow.className.includes("is-right")
       ? "right"
-      : arrow.classList.contains("is-bottom")
+      : arrow.className.includes("is-bottom")
       ? "bottom"
       : "top";
     const oppositeDirection = oppositeOf[naturalDirection];
@@ -119,6 +119,7 @@ arrowClass = "tooltip2_arrow";
       window.requestAnimationFrame(keepInViewport);
       const iconBox = icon.getBoundingClientRect();
       const tooltipBox = tooltip.getBoundingClientRect();
+      const docEl = document.documentElement;
 
       // Step 1 - on the perpendicular axis to naturalDirection, slide the
       //   tooltip to keep it in the viewport.
@@ -134,7 +135,7 @@ arrowClass = "tooltip2_arrow";
           tooltipBox[slideAxis.len]) /
         2;
       let slidePx = 0;
-      const windowEnd = window["inner" + titleCase(slideAxis.len)];
+      const windowEnd = docEl["client" + titleCase(slideAxis.len)];
       if (desiredStart < 0) {
         slidePx = -desiredStart;
       } else if (desiredEnd > windowEnd) {
@@ -144,9 +145,9 @@ arrowClass = "tooltip2_arrow";
       // Step 2 - set the direction of the tooltip to either naturalDirection or
       //   oppositeDirection direction, whichever fits best.
       const fits = {
-        ["bottom"]: iconBox.bottom + tooltipBox.height < window.innerHeight,
+        ["bottom"]: iconBox.bottom + tooltipBox.height < docEl.clientHeight,
         ["left"]: iconBox.left - tooltipBox.width > 0,
-        ["right"]: iconBox.right + tooltipBox.width < window.innerWidth,
+        ["right"]: iconBox.right + tooltipBox.width < docEl.clientWidth,
         ["top"]: iconBox.top - tooltipBox.height > 0,
       };
       const newDirection =
