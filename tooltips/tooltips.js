@@ -3,7 +3,7 @@
 // @compilation_level ADVANCED_OPTIMIZATIONS
 // @js_externs var iconWrapperClass
 // @js_externs var tooltipWrapperClass
-// @js_externs var arrowClass
+// @js_externs var pointerClass
 // @language_out ECMASCRIPT_2015
 // ==/ClosureCompiler==
 //
@@ -13,7 +13,7 @@
 // mangled by ClosureCompiler:
 iconWrapperClass = "tooltip1_element-wrapper";
 tooltipWrapperClass = "tooltip1_tooltip-wrapper";
-arrowClass = "tooltip1_arrow";
+pointerClass = "tooltip1_pointer";
 
 (() => {
   //////////////////////
@@ -33,11 +33,24 @@ arrowClass = "tooltip1_arrow";
     ["right"]: "left",
     ["top"]: "bottom",
   };
-  const arrowRotation = {
-    ["bottom"]: 180,
-    ["left"]: -90,
-    ["right"]: 90,
-    ["top"]: 0,
+  const pointerCss = {
+    ["bottom"]: {
+      // order: top, right, bottom, left (clockwise)
+      margin: [1, "auto", 0, "auto"],
+      inset: [0, 0, "auto", 0],
+    },
+    ["left"]: {
+      margin: [0, 1, 0, 0],
+      inset: ["auto", 0, "auto", "auto"],
+    },
+    ["right"]: {
+      margin: [0, 0, 0, 1],
+      inset: ["auto", "auto", "auto", 0],
+    },
+    ["top"]: {
+      margin: [0, "auto", 1, "auto"],
+      inset: ["auto", 0, 0, 0],
+    },
   };
   /* The css property names for the horizontal axis */
   const horizontalAxis = {
@@ -73,6 +86,18 @@ arrowClass = "tooltip1_arrow";
     );
   }
 
+  /** Returns the style properties of the pointer.  Users might customize margin values in Webflow */
+  function getPointerMargin(pointer, naturalDirection) {
+    const style = window.getComputedStyle(pointer);
+    const idx = pointerCss[naturalDirection].margin.indexOf(1);
+    return [
+      style.marginTop,
+      style.marginRight,
+      style.marginBottom,
+      style.marginLeft,
+    ][idx];
+  }
+
   function setupTooltip(icon) {
     // Ensure setupTooltip is idempotent:
     const isSetupKey = "relumeTooltipSetup";
@@ -80,16 +105,17 @@ arrowClass = "tooltip1_arrow";
     icon.dataset[isSetupKey] = 1;
 
     const tooltip = icon.parentElement.querySelector("." + tooltipWrapperClass);
-    const arrow = icon.parentElement.querySelector("." + arrowClass);
-    const naturalDirection = arrow.className.includes("is-left")
+    const pointer = icon.parentElement.querySelector("." + pointerClass);
+    const naturalDirection = pointer.className.includes("is-left")
       ? "left"
-      : arrow.className.includes("is-right")
+      : pointer.className.includes("is-right")
       ? "right"
-      : arrow.className.includes("is-bottom")
+      : pointer.className.includes("is-bottom")
       ? "bottom"
       : "top";
     const oppositeDirection = oppositeOf[naturalDirection];
     const tooltipPadding = getTooltipPadding(tooltip);
+    const pointerMargin = getPointerMargin(pointer, naturalDirection);
 
     /** Updates the tooltip's style to position it in direction `d` */
     function updateTooltipStyle(d, slideAxis, slidePx) {
@@ -100,16 +126,12 @@ arrowClass = "tooltip1_arrow";
       tooltip.style[paddingPropertyName(d)] = "0";
       tooltip.style.transform = slideAxis.translate + "(" + slidePx + "px)";
 
-      arrow.style.transform =
-        slideAxis.translate +
-        "(" +
-        -slidePx +
-        "px) " +
-        "rotate(" +
-        arrowRotation[d] +
-        "deg) ";
-      arrow.style[d] = "auto";
-      arrow.style[o] = d === "top" || d === "bottom" ? "0.25rem" : "0";
+      pointer.style.transform =
+        slideAxis.translate + "(" + -slidePx + "px) rotate(45deg)";
+      pointer.style.margin = pointerCss[d].margin
+        .map((x) => (x === 1 ? pointerMargin : x))
+        .join(" ");
+      pointer.style.inset = pointerCss[d].inset.join(" ");
     }
 
     let open = false;
