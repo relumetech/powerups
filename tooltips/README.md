@@ -9,3 +9,9 @@ This script is included in all of the tooltip components from [Relume Library's 
 2. Slide the tooltip along the perpendicular axis, to keep it within the viewport:
 
 [Screencast from 2023-04-06 10-16-40.webm](https://user-images.githubusercontent.com/6022042/230241536-adb972a1-fce3-4ed7-91b2-eef2a9877fbd.webm)
+
+## Building
+
+```
+npx uglify-js --mangle --compress -- tooltips.js
+```

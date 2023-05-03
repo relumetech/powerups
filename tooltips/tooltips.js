@@ -1,16 +1,3 @@
-// ==ClosureCompiler==
-// @output_file_name default.js
-// @compilation_level ADVANCED_OPTIMIZATIONS
-// @js_externs var iconWrapperClass
-// @js_externs var tooltipWrapperClass
-// @js_externs var pointerClass
-// @language_out ECMASCRIPT_2015
-// ==/ClosureCompiler==
-//
-//
-// Use https://closure-compiler.appspot.com/home
-// Move the *Class variables inside the IIFE.  They're outside so the names are not
-// mangled by ClosureCompiler:
 iconWrapperClass = "tooltip1_element-wrapper";
 tooltipWrapperClass = "tooltip1_tooltip-wrapper";
 pointerClass = "tooltip1_pointer";
@@ -28,26 +15,26 @@ pointerClass = "tooltip1_pointer";
 
   /** The opposite direction of each direction */
   const oppositeOf = {
-    ["bottom"]: "top",
-    ["left"]: "right",
-    ["right"]: "left",
-    ["top"]: "bottom",
+    bottom: "top",
+    left: "right",
+    right: "left",
+    top: "bottom",
   };
   const pointerCss = {
-    ["bottom"]: {
+    bottom: {
       // order: top, right, bottom, left (clockwise)
       margin: [1, "auto", 0, "auto"],
       inset: [0, 0, "auto", 0],
     },
-    ["left"]: {
+    left: {
       margin: [0, 1, 0, 0],
       inset: ["auto", 0, "auto", "auto"],
     },
-    ["right"]: {
+    right: {
       margin: [0, 0, 0, 1],
       inset: ["auto", "auto", "auto", 0],
     },
-    ["top"]: {
+    top: {
       margin: [0, "auto", 1, "auto"],
       inset: ["auto", 0, 0, 0],
     },
@@ -68,10 +55,10 @@ pointerClass = "tooltip1_pointer";
   };
   /** The axis perpendicular to each direction */
   const perpendicularAxisTo = {
-    ["bottom"]: horizontalAxis,
-    ["left"]: verticalAxis,
-    ["right"]: verticalAxis,
-    ["top"]: horizontalAxis,
+    top: horizontalAxis,
+    bottom: horizontalAxis,
+    left: verticalAxis,
+    right: verticalAxis,
   };
 
   /** Returns the style properties of the tooltip.  Users might customize padding values in Webflow */
@@ -167,10 +154,10 @@ pointerClass = "tooltip1_pointer";
       // Step 2 - set the direction of the tooltip to either naturalDirection or
       //   oppositeDirection direction, whichever fits best.
       const fits = {
-        ["bottom"]: iconBox.bottom + tooltipBox.height < docEl.clientHeight,
-        ["left"]: iconBox.left - tooltipBox.width > 0,
-        ["right"]: iconBox.right + tooltipBox.width < docEl.clientWidth,
-        ["top"]: iconBox.top - tooltipBox.height > 0,
+        bottom: iconBox.bottom + tooltipBox.height < docEl.clientHeight,
+        left: iconBox.left - tooltipBox.width > 0,
+        right: iconBox.right + tooltipBox.width < docEl.clientWidth,
+        top: iconBox.top - tooltipBox.height > 0,
       };
       const newDirection =
         fits[naturalDirection] || !fits[oppositeDirection]
